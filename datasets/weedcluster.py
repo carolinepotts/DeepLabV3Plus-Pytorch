@@ -4,6 +4,7 @@ from skimage import io, transform
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
 from PIL import Image
+import numpy as np 
 
 class WeedClusterDataset(Dataset):
     """weed_cluster class only dataset.  Use when only detecting weed clusters to minimize memory usage."""
