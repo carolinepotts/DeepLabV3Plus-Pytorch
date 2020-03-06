@@ -36,7 +36,7 @@ class WeedClusterDataset(Dataset):
         # print("img shape: ", img.shape)
         target = torch.from_numpy(np.array(Image.open(self.root + self.split +  '/labels/weed_cluster/' + self.images[index][:-4] + '.png')))
         # print("target shape: ", target.shape)
-        print("target: ", target)
+        # print("target: ", target)
 
         return img, target
 

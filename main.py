@@ -181,6 +181,7 @@ def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
 
             outputs = model(images)
             preds = outputs.detach().max(dim=1)[1].cpu().numpy()
+            print(preds)
             targets = labels.cpu().numpy()
 
             metrics.update(targets, preds)
@@ -382,12 +383,12 @@ def main():
                     vis.vis_scalar("[Val] Mean IoU", cur_itrs, val_score['Mean IoU'])
                     vis.vis_table("[Val] Class IoU", val_score['Class IoU'])
 
-                    # for k, (img, target, lbl) in enumerate(ret_samples):
-                    #     img = (denorm(img) * 255).astype(np.uint8)
-                    #     target = train_dst.decode_target(target).transpose(2, 0, 1).astype(np.uint8)
-                    #     lbl = train_dst.decode_target(lbl).transpose(2, 0, 1).astype(np.uint8)
-                    #     concat_img = np.concatenate((img, target, lbl), axis=2)  # concat along width
-                    #     vis.vis_image('Sample %d' % k, concat_img)
+                    for k, (img, target, lbl) in enumerate(ret_samples):
+                        img = (denorm(img) * 255).astype(np.uint8)
+                        target = train_dst.decode_target(target).transpose(2, 0, 1).astype(np.uint8)
+                        lbl = train_dst.decode_target(lbl).transpose(2, 0, 1).astype(np.uint8)
+                        concat_img = np.concatenate((img, target, lbl), axis=2)  # concat along width
+                        vis.vis_image('Sample %d' % k, concat_img)
                 model.train()
             scheduler.step()  
 
