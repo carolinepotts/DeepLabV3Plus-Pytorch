@@ -339,7 +339,7 @@ def main():
         weight_str = opts.loss_weights
         weight_list = [float(i)  for i in weight_str.strip().split(",")]
         if len(weight_list) != opts.num_classes:
-            throw ValueError("Need one weight per class for weighted cross entropy loss")
+            raise ValueError("Need one weight per class for weighted cross entropy loss")
         class_weights = torch.FloatTensor(weight_list).cuda()
         criterion = nn.CrossEntropyLoss(weights=class_weights, reduction='mean')
 
