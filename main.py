@@ -223,6 +223,8 @@ def main():
         opts.num_classes = 21
     elif opts.dataset.lower() == 'cityscapes':
         opts.num_classes = 19
+    elif opts.dataset.lower() == 'weedcluster':
+        opts.num_classes = 1
 
     # Setup visualization
     vis = Visualizer(port=opts.vis_port,
