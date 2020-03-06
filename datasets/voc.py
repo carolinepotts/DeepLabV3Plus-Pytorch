@@ -146,6 +146,9 @@ class VOCSegmentation(data.Dataset):
         if self.transform is not None:
             img, target = self.transform(img, target)
 
+        print('img shape: ', img.shape)
+        print('target shape: ', target.shape)
+
         return img, target
 
 
