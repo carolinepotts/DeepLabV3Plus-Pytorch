@@ -181,7 +181,7 @@ def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
 
             outputs = model(images)
             preds = outputs.detach().max(dim=1)[1].cpu().numpy()
-            print(np.amax(preds))
+            # print(np.amax(preds))
             targets = labels.cpu().numpy()
 
             metrics.update(targets, preds)
@@ -290,6 +290,8 @@ def main():
         criterion = utils.FocalLoss(ignore_index=255, size_average=True)
     elif opts.loss_type == 'cross_entropy':
         criterion = nn.CrossEntropyLoss(ignore_index=255, reduction='mean')
+    elif opts.loss_type == 'cross_entropy_2':
+        criterion = nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
 
     def save_ckpt(path):
         """ save current model
