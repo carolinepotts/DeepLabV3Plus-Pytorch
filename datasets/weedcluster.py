@@ -23,6 +23,10 @@ class WeedClusterDataset(Dataset):
             raise ValueError('Invalid split for mode! Please use split="train", split="test"'
                              ' or split="val"')
 
+    @classmethod
+    def decode_target(cls, target):
+        return target
+
     def __len__(self):
         return len(self.images)
 
@@ -32,3 +36,5 @@ class WeedClusterDataset(Dataset):
         target = torch.from_numpy(np.array(Image.open(self.root + 'labels/weed_cluster/' + self.images[index][:-4] + '.png')))
         # print("target shape: ", target.shape)
         return img, target
+
+    
