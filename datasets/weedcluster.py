@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
 from PIL import Image
 
-class WeedClusterDataset(data.Dataset):
+class WeedClusterDataset(Dataset):
     """weed_cluster class only dataset.  Use when only detecting weed clusters to minimize memory usage."""
 
     def __init__(self, root, split='train'):
