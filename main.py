@@ -64,9 +64,9 @@ def get_argparser():
     parser.add_argument("--continue_training", action='store_true', default=False)
 
     parser.add_argument("--loss_type", type=str, default='None',
-                        help="weights for classes in weighted cross entropy loss")
-    parser.add_argument("--loss_weights", type=str, default='cross_entropy',
                         choices=['cross_entropy', 'focal_loss', 'cross_entropy_2', 'weighted_cross_entropy'], help="loss type (default: False)")
+    parser.add_argument("--loss_weights", type=str, default='cross_entropy',
+                        help="weights for classes in weighted cross entropy loss")
     parser.add_argument("--gpu_id", type=str, default='0',
                         help="GPU ID")
     parser.add_argument("--weight_decay", type=float, default=1e-4,
