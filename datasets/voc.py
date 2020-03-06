@@ -148,6 +148,7 @@ class VOCSegmentation(data.Dataset):
 
         # print('img shape: ', img.shape)
         # print('target shape: ', target.shape)
+        print(target)
 
         return img, target
 
