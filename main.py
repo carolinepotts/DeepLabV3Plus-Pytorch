@@ -291,7 +291,7 @@ def main():
     elif opts.loss_type == 'cross_entropy':
         criterion = nn.CrossEntropyLoss(ignore_index=255, reduction='mean')
     elif opts.loss_type == 'cross_entropy_2':
-        criterion = nn.CrossEntropyLoss(reduction='mean')
+         criterion = nn.CrossEntropyLoss(ignore_index=255, reduction='mean')
 
     def save_ckpt(path):
         """ save current model
