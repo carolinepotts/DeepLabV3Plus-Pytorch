@@ -27,7 +27,7 @@ def get_argparser():
     parser.add_argument("--data_root", type=str, default='./datasets/data',
                         help="path to Dataset")
     parser.add_argument("--dataset", type=str, default='voc',
-                        choices=['voc', 'cityscapes'], help='Name of dataset')
+                        choices=['voc', 'cityscapes', 'weedcluster'], help='Name of dataset')
     parser.add_argument("--num_classes", type=int, default=None,
                         help="num classes (default: None)")
 
@@ -148,7 +148,18 @@ def get_dataset(opts):
                                split='train', transform=train_transform)
         val_dst = Cityscapes(root=opts.data_root,
                              split='val', transform=val_transform)
+
+
+    if opts.dataset == 'weedcluster':
+        train_dst = WeedClusterDataset(root=opts.data_root,
+                               split='train')
+        val_dst = WeedClusterDataset(root=opts.data_root,
+                               split='val')
+
+                               
     return train_dst, val_dst
+
+    
 
 
 def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
