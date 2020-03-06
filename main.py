@@ -225,7 +225,7 @@ def main():
     elif opts.dataset.lower() == 'cityscapes':
         opts.num_classes = 19
     elif opts.dataset.lower() == 'weedcluster':
-        opts.num_classes = 1
+        opts.num_classes = 2
 
     # Setup visualization
     vis = Visualizer(port=opts.vis_port,
@@ -291,7 +291,7 @@ def main():
     elif opts.loss_type == 'cross_entropy':
         criterion = nn.CrossEntropyLoss(ignore_index=255, reduction='mean')
     elif opts.loss_type == 'cross_entropy_2':
-        criterion = nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
+        criterion = nn.CrossEntropyLoss(reduction='mean')
 
     def save_ckpt(path):
         """ save current model
