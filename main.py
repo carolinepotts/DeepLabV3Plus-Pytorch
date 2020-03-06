@@ -181,7 +181,7 @@ def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
 
             outputs = model(images)
             preds = outputs.detach().max(dim=1)[1].cpu().numpy()
-            print(preds)
+            print(np.amax(preds))
             targets = labels.cpu().numpy()
 
             metrics.update(targets, preds)
