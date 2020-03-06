@@ -27,5 +27,5 @@ class WeedClusterDataset(Dataset):
 
     def __getitem__(self, index):
         img = Image.open(self.root + 'images/rgb/' + self.images[index]).convert('RGB')
-        target = Image.open(self.root + 'labels/weed_cluster/' + self.images[index][:-4] + '.png')
+        target = np.array(Image.open(self.root + 'labels/weed_cluster/' + self.images[index][:-4] + '.png'))
         return img, target
