@@ -14,15 +14,16 @@ class WeedClusterDataset(Dataset):
         Args:
             root (string): Directory that includes directory of images and directory of labels. Should end in '/'
         """
-        
-        self.root = root
-        self.images = os.listdir(self.root + 'images/rgb/')
-        self.split = split
-
         if split not in ['train', 'test', 'val']:
             raise ValueError('Invalid split for mode! Please use split="train", split="test"'
                              ' or split="val"')
 
+        self.split = split
+        self.root = root
+        self.images = os.listdir(self.root + '/' + split + '/images/rgb/')
+        
+
+        
     @classmethod
     def decode_target(cls, target):
         return target
