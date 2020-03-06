@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 
 from torch.utils import data
-from datasets import VOCSegmentation, Cityscapes
+from datasets import VOCSegmentation, Cityscapes, WeedClusterDataset
 from utils import ext_transforms as et
 from metrics import StreamSegMetrics
 
@@ -156,7 +156,7 @@ def get_dataset(opts):
         val_dst = WeedClusterDataset(root=opts.data_root,
                                split='val')
 
-                               
+
     return train_dst, val_dst
 
     
