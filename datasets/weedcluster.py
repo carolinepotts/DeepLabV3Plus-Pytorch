@@ -32,9 +32,9 @@ class WeedClusterDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, index):
-        img = torch.from_numpy(np.array(Image.open(self.root + '/' + split +  'images/rgb/' + self.images[index]).convert('RGB')).reshape((3,512,512)))
+        img = torch.from_numpy(np.array(Image.open(self.root + '/' + self.split +  'images/rgb/' + self.images[index]).convert('RGB')).reshape((3,512,512)))
         # print("img shape: ", img.shape)
-        target = torch.from_numpy(np.array(Image.open(self.root + '/' + split +  'labels/weed_cluster/' + self.images[index][:-4] + '.png')))
+        target = torch.from_numpy(np.array(Image.open(self.root + '/' + self.split +  'labels/weed_cluster/' + self.images[index][:-4] + '.png')))
         # print("target shape: ", target.shape)
         return img, target
 
