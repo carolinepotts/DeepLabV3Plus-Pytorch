@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 
 from torch.utils import data
-from datasets import VOCSegmentation, Cityscapes, WeedClusterDataset
+from datasets import VOCSegmentation, Cityscapes, WeedClusterDataset, CloudShadowDataset, DoublePlantDataset, PlanterSkipDataset, StandingWaterDataset, WaterwayDataset
 from utils import ext_transforms as et
 from metrics import StreamSegMetrics
 
@@ -27,7 +27,7 @@ def get_argparser():
     parser.add_argument("--data_root", type=str, default='./datasets/data',
                         help="path to Dataset")
     parser.add_argument("--dataset", type=str, default='voc',
-                        choices=['voc', 'cityscapes', 'weedcluster'], help='Name of dataset')
+                        choices=['voc', 'cityscapes', 'weedcluster', 'cloudshadow', 'doubleplant', 'planterskip', 'standingwater', 'waterway'], help='Name of dataset')
     parser.add_argument("--num_classes", type=int, default=None,
                         help="num classes (default: None)")
 
@@ -156,6 +156,37 @@ def get_dataset(opts):
         val_dst = WeedClusterDataset(root=opts.data_root,
                                split='val')
 
+    if opts.dataset == 'cloudshadow':
+        train_dst = CloudShadowDataset(root=opts.data_root,
+                               split='train')
+        val_dst = CloudShadowDataset(root=opts.data_root,
+                               split='val')
+
+    if opts.dataset == 'doubleplant':
+        train_dst = DoublePlantDataset(root=opts.data_root,
+                               split='train')
+        val_dst = DoublePlantDataset(root=opts.data_root,
+                               split='val')
+
+    if opts.dataset == 'planterskip':
+        train_dst = PlanterSkipDataset(root=opts.data_root,
+                               split='train')
+        val_dst = PlanterSkipDataset(root=opts.data_root,
+                               split='val')
+
+    if opts.dataset == 'standingwater':
+        train_dst = StandingWaterDataset(root=opts.data_root,
+                               split='train')
+        val_dst = StandingWaterDataset(root=opts.data_root,
+                               split='val')
+    
+    if opts.dataset == 'waterway':
+        train_dst = WaterwayDataset(root=opts.data_root,
+                               split='train')
+        val_dst = WaterwayDataset(root=opts.data_root,
+                               split='val')
+
+
 
     return train_dst, val_dst
 
@@ -225,6 +256,16 @@ def main():
     elif opts.dataset.lower() == 'cityscapes':
         opts.num_classes = 19
     elif opts.dataset.lower() == 'weedcluster':
+        opts.num_classes = 2
+    elif opts.dataset.lower() == 'cloudshadow':
+        opts.num_classes = 2
+    elif opts.dataset.lower() == 'doubleplant':
+        opts.num_classes = 2
+    elif opts.dataset.lower() == 'planterskip':
+        opts.num_classes = 2
+    elif opts.dataset.lower() == 'standingwater':
+        opts.num_classes = 2
+    elif opts.dataset.lower() == 'waterway':
         opts.num_classes = 2
 
     # Setup visualization
