@@ -341,7 +341,7 @@ def main():
         if len(weight_list) != opts.num_classes:
             raise ValueError("Need one weight per class for weighted cross entropy loss")
         class_weights = torch.FloatTensor(weight_list).cuda()
-        criterion = nn.CrossEntropyLoss(weights=class_weights, reduction='mean')
+        criterion = nn.CrossEntropyLoss(weight=class_weights, reduction='mean')
 
     def save_ckpt(path):
         """ save current model
