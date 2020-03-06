@@ -63,8 +63,10 @@ def get_argparser():
                         help="restore from checkpoint")
     parser.add_argument("--continue_training", action='store_true', default=False)
 
-    parser.add_argument("--loss_type", type=str, default='cross_entropy',
-                        choices=['cross_entropy', 'focal_loss', 'cross_entropy_2'], help="loss type (default: False)")
+    parser.add_argument("--loss_type", type=str, default='None',
+                        help="weights for classes in weighted cross entropy loss")
+    parser.add_argument("--loss_weights", type=str, default='cross_entropy',
+                        choices=['cross_entropy', 'focal_loss', 'cross_entropy_2', 'weighted_cross_entropy'], help="loss type (default: False)")
     parser.add_argument("--gpu_id", type=str, default='0',
                         help="GPU ID")
     parser.add_argument("--weight_decay", type=float, default=1e-4,
@@ -333,6 +335,13 @@ def main():
         criterion = nn.CrossEntropyLoss(ignore_index=255, reduction='mean')
     elif opts.loss_type == 'cross_entropy_2':
          criterion = nn.CrossEntropyLoss(reduction='mean')
+    elif opts.loss_type == 'weighted_cross_entropy':
+        weight_str = opts.loss_weights
+        weight_list = [float(i)  for i in weight_str.strip().split(",")]
+        if len(weight_list) != opts.num_classes:
+            throw ValueError("Need one weight per class for weighted cross entropy loss")
+        class_weights = torch.FloatTensor(weight_list).cuda()
+        criterion = nn.CrossEntropyLoss(weights=class_weights, reduction='mean')
 
     def save_ckpt(path):
         """ save current model
