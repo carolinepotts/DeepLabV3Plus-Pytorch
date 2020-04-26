@@ -27,7 +27,7 @@ def get_argparser():
     parser.add_argument("--data_root", type=str, default='./datasets/data',
                         help="path to Dataset")
     parser.add_argument("--dataset", type=str, default='voc',
-                        choices=['voc', 'cityscapes', 'weedcluster', 'cloudshadow', 'doubleplant', 'planterskip', 'standingwater', 'waterway'], help='Name of dataset')
+                        choices=['voc', 'cityscapes', 'all', 'weedcluster', 'cloudshadow', 'doubleplant', 'planterskip', 'standingwater', 'waterway'], help='Name of dataset')
     parser.add_argument("--num_classes", type=int, default=None,
                         help="num classes (default: None)")
 
@@ -151,6 +151,11 @@ def get_dataset(opts):
         val_dst = Cityscapes(root=opts.data_root,
                              split='val', transform=val_transform)
 
+    if opts.dataset == 'all':
+        train_dst = AllDataset(root=opts.data_root,
+                               split='train')
+        val_dst = AllDataset(root=opts.data_root,
+                               split='val')
 
     if opts.dataset == 'weedcluster':
         train_dst = WeedClusterDataset(root=opts.data_root,
@@ -250,6 +255,41 @@ def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
         score = metrics.get_results()
     return score, ret_samples
 
+class multi_output_model(torch.nn.Module):
+    def __init__(self, model_core):
+        super(multi_output_model, self).__init__()
+        
+        self.deeplab_model = model_core
+        
+        #heads
+        self.y1o = nn.Linear(512,512)
+        nn.init.xavier_normal_(self.y1o.weight)
+        self.y2o = nn.Linear(512,512)
+        nn.init.xavier_normal_(self.y2o.weight)
+        self.y3o = nn.Linear(512,512)
+        nn.init.xavier_normal_(self.y3o.weight)
+        self.y4o = nn.Linear(512,512)
+        nn.init.xavier_normal_(self.y4o.weight)
+        self.y5o = nn.Linear(512,512)
+        nn.init.xavier_normal_(self.y5o.weight)
+        self.y6o = nn.Linear(512,512)
+        nn.init.xavier_normal_(self.y6o.weight)
+        
+        
+    def forward(self, x):
+       
+        x = self.deeplab_model(x)
+        
+        # heads
+        y1o = self.y1o(x)
+        y2o = self.y2o(x)
+        y3o = self.y3o(x)
+        y4o = self.y4o(x)
+        y5o = self.y5o(x)
+        y6o = self.y6o(x)
+
+        return y1o, y2o, y3o, y4o, y5o, y6o
+
 
 def main():
     opts = get_argparser().parse_args()
@@ -268,6 +308,8 @@ def main():
     elif opts.dataset.lower() == 'standingwater':
         opts.num_classes = 2
     elif opts.dataset.lower() == 'waterway':
+        opts.num_classes = 2
+    elif opts.dataset.lower() == 'all':
         opts.num_classes = 2
 
     # Setup visualization
@@ -305,13 +347,14 @@ def main():
         'deeplabv3plus_resnet101': network.deeplabv3plus_resnet101,
         'deeplabv3_mobilenet': network.deeplabv3_mobilenet,
         'deeplabv3plus_mobilenet': network.deeplabv3plus_mobilenet
+
     }
 
     model = model_map[opts.model](num_classes=opts.num_classes, output_stride=opts.output_stride)
     if opts.separable_conv and 'plus' in opts.model:
         network.convert_to_separable_conv(model.classifier)
     utils.set_bn_momentum(model.backbone, momentum=0.01)
-    # TODO: set up six output heads here as part of model
+    model = multi_output_model(model)
     
     # Set up metrics
     metrics = StreamSegMetrics(opts.num_classes)
@@ -343,7 +386,7 @@ def main():
             raise ValueError("Need one weight per class for weighted cross entropy loss")
         class_weights = torch.FloatTensor(weight_list).cuda()
         criterion = nn.CrossEntropyLoss(weight=class_weights, reduction='mean')
-    # TODO: add multitask crit1, crit2, ... here, based on weighted cross entropy loss 
+    # TODO later (once training works): add multitask crit1, crit2, ... here, for weighted cross entropy loss 
 
     def save_ckpt(path):
         """ save current model
@@ -397,16 +440,29 @@ def main():
         model.train()
         cur_epochs += 1
         # TODO: fix images, labels to be images, la1, la2, ... bc dataloader will now have 7 things in it
-        for (images, labels) in train_loader:
+        for (images, la1, la2, la3, la4, la5, la6) in train_loader:
             cur_itrs += 1
 
             images = images.to(device, dtype=torch.float32)
-            labels = labels.to(device, dtype=torch.long)
+            la1 = la1.to(device, dtype=torch.long)
+            la2 = la2.to(device, dtype=torch.long)
+            la3 = la3.to(device, dtype=torch.long)
+            la4 = la4.to(device, dtype=torch.long)
+            la5 = la5.to(device, dtype=torch.long)
+            la6 = la6.to(device, dtype=torch.long)
+
 
             optimizer.zero_grad()
             outputs = model(images)
-            # TODO: edit this as well - l1 = crit1, l2 = crit2, ... and then sum for loss 
-            loss = criterion(outputs, labels)
+            # TODO later: edit this as well for weighted cr en-
+            #  l1 = crit1, l2 = crit2, ... and then sum for loss 
+            l1 = criterion(outputs[0], la1)
+            l2 = criterion(outputs[1], la2)
+            l3 = criterion(outputs[2], la3)
+            l4 = criterion(outputs[3], la4)
+            l5 = criterion(outputs[4], la5)
+            l6 = criterion(outputs[5], la6)
+            loss = l1 + l2 + l3 + l4 + l5 + l6
             loss.backward()
             optimizer.step()
 

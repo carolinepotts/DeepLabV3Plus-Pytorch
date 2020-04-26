@@ -6,6 +6,46 @@ from torchvision import transforms, utils
 from PIL import Image
 import numpy as np 
 
+class AllDataset(Dataset):
+    """all 6 classes dataset"""
+
+    def __init__(self, root, split='train'):
+        """
+        Args:
+            root (string): Directory that includes directory of images and directory of labels. Should end in '/'
+        """
+        if split not in ['train', 'test', 'val']:
+            raise ValueError('Invalid split for mode! Please use split="train", split="test"'
+                             ' or split="val"')
+
+        self.split = split
+        self.root = root
+        self.images = os.listdir(self.root + split + '/images/rgb/')
+        
+
+        
+    # @classmethod
+    # def decode_target(cls, target):
+    #     return target
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, index):
+        img = torch.from_numpy(np.array(Image.open(self.root + self.split +  '/images/rgb/' + self.images[index]).convert('RGB')).reshape((3,512,512)))
+        # print("img shape: ", img.shape)
+        t1 = torch.from_numpy((np.array(Image.open(self.root + self.split +  '/labels/cloud_shadow/' + self.images[index][:-4] + '.png'))/255).astype(int))
+        t2 = torch.from_numpy((np.array(Image.open(self.root + self.split +  '/labels/double_plant/' + self.images[index][:-4] + '.png'))/255).astype(int))
+        t3 = torch.from_numpy((np.array(Image.open(self.root + self.split +  '/labels/planter_skip/' + self.images[index][:-4] + '.png'))/255).astype(int))
+        t4 = torch.from_numpy((np.array(Image.open(self.root + self.split +  '/labels/standing_water/' + self.images[index][:-4] + '.png'))/255).astype(int))
+        t5 = torch.from_numpy((np.array(Image.open(self.root + self.split +  '/labels/waterway/' + self.images[index][:-4] + '.png'))/255).astype(int))
+        t6 = torch.from_numpy((np.array(Image.open(self.root + self.split +  '/labels/weed_cluster/' + self.images[index][:-4] + '.png'))/255).astype(int))
+        # print("target shape: ", target.shape)
+        # print("target: ", target)
+
+        return img, t1, t2, t3, t4, t5, t6
+
+
 class WeedClusterDataset(Dataset):
     """weed_cluster class only dataset.  Use when only detecting weed clusters to minimize memory usage."""
 
