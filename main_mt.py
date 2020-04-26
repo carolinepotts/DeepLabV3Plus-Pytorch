@@ -42,8 +42,6 @@ def get_argparser():
 
     # Train Options
     parser.add_argument("--test_only", action='store_true', default=False)
-    parser.add_argument("--save_val_results", action='store_true', default=False,
-                        help="save segmentation results to \"./results\"")
     parser.add_argument("--total_itrs", type=int, default=30e3,
                         help="epoch number (default: 30k)")
     parser.add_argument("--lr", type=float, default=0.01,
@@ -200,60 +198,55 @@ def get_dataset(opts):
     
 
 
-def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
+def validate(opts, model, loader, device, metrics1, metrics2, metrics3, metrics4,
+    metrics5, metrics6, ret_samples_ids=None):
     """Do validation and return specified samples"""
-    metrics.reset()
+    metrics1.reset()
+    metrics2.reset()
+    metrics3.reset()
+    metrics4.reset()
+    metrics5.reset()
+    metrics6.reset()
+
     ret_samples = []
-    if opts.save_val_results:
-        if not os.path.exists('results'):
-            os.mkdir('results')
-        denorm = utils.Denormalize(mean=[0.485, 0.456, 0.406], 
-                                   std=[0.229, 0.224, 0.225])
-        img_id = 0
 
     with torch.no_grad():
-        for i, (images, labels) in tqdm(enumerate(loader)):
+        for i, (images, la1, la2, la3, la4, la5, la6) in tqdm(enumerate(loader)):
             
             images = images.to(device, dtype=torch.float32)
-            labels = labels.to(device, dtype=torch.long)
+            la1 = la1.to(device, dtype=torch.long)
+            la2 = la2.to(device, dtype=torch.long)
+            la3 = la3.to(device, dtype=torch.long)
+            la4 = la4.to(device, dtype=torch.long)
+            la5 = la5.to(device, dtype=torch.long)
+            la6 = la6.to(device, dtype=torch.long)
 
             outputs = model(images)
             preds = outputs.detach().max(dim=1)[1].cpu().numpy()
-            # print(np.amax(preds))
-            targets = labels.cpu().numpy()
 
-            metrics.update(targets, preds)
-            if ret_samples_ids is not None and i in ret_samples_ids:  # get vis samples
-                ret_samples.append(
-                    (images[0].detach().cpu().numpy(), targets[0], preds[0]))
+            targets1 = la1.cpu().numpy()
+            targets2 = la2.cpu().numpy()
+            targets3 = la3.cpu().numpy()
+            targets4 = la4.cpu().numpy()
+            targets5 = la5.cpu().numpy()
+            targets6 = la6.cpu().numpy()
 
-            if opts.save_val_results:
-                for i in range(len(images)):
-                    image = images[i].detach().cpu().numpy()
-                    target = targets[i]
-                    pred = preds[i]
 
-                    image = (denorm(image) * 255).transpose(1, 2, 0).astype(np.uint8)
-                    target = loader.dataset.decode_target(target).astype(np.uint8)
-                    pred = loader.dataset.decode_target(pred).astype(np.uint8)
+            metrics1.update(targets1, preds[0])
+            metrics2.update(targets2, preds[1])
+            metrics3.update(targets3, preds[2])
+            metrics4.update(targets4, preds[3])
+            metrics5.update(targets5, preds[4])
+            metrics6.update(targets6, preds[5])
 
-                    Image.fromarray(image).save('results/%d_image.png' % img_id)
-                    Image.fromarray(target).save('results/%d_target.png' % img_id)
-                    Image.fromarray(pred).save('results/%d_pred.png' % img_id)
+        score1 = metrics1.get_results()
+        score2 = metrics2.get_results()
+        score3 = metrics3.get_results()
+        score4 = metrics4.get_results()
+        score5 = metrics5.get_results()
+        score6 = metrics6.get_results()
 
-                    fig = plt.figure()
-                    plt.imshow(image)
-                    plt.axis('off')
-                    plt.imshow(pred, alpha=0.7)
-                    ax = plt.gca()
-                    ax.xaxis.set_major_locator(matplotlib.ticker.NullLocator())
-                    ax.yaxis.set_major_locator(matplotlib.ticker.NullLocator())
-                    plt.savefig('results/%d_overlay.png' % img_id, bbox_inches='tight', pad_inches=0)
-                    plt.close()
-                    img_id += 1
-
-        score = metrics.get_results()
-    return score, ret_samples
+    return score1, score2, score3, score4, score5, score6, ret_samples
 
 class multi_output_model(torch.nn.Module):
     def __init__(self, model_core):
@@ -357,7 +350,13 @@ def main():
     model = multi_output_model(model)
     
     # Set up metrics
-    metrics = StreamSegMetrics(opts.num_classes)
+    metrics1 = StreamSegMetrics(opts.num_classes)
+    metrics2 = StreamSegMetrics(opts.num_classes)
+    metrics3 = StreamSegMetrics(opts.num_classes)
+    metrics4 = StreamSegMetrics(opts.num_classes)
+    metrics5 = StreamSegMetrics(opts.num_classes)
+    metrics6 = StreamSegMetrics(opts.num_classes)
+
 
     # Set up optimizer
     optimizer = torch.optim.SGD(params=[
