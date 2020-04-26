@@ -481,9 +481,18 @@ def main():
                           (opts.model, opts.dataset, opts.output_stride))
                 print("validation...")
                 model.eval()
-                val_score, ret_samples = validate(
-                    opts=opts, model=model, loader=val_loader, device=device, metrics=metrics, ret_samples_ids=vis_sample_id)
-                print(metrics.to_str(val_score))
+                val_score1, val_score2, val_score3, val_score4, val_score5, 
+                val_score6, ret_samples = validate(
+                    opts=opts, model=model, loader=val_loader, device=device, metrics1=metrics1, 
+                    metrics2=metrics2, metrics3=metrics3, metrics4=metrics4, metrics5=metrics5, 
+                    metrics6=metrics6, ret_samples_ids=vis_sample_id)
+                print('class 1: ', metrics1.to_str(val_score1))
+                print('class 2: ', metrics2.to_str(val_score2))
+                print('class 3: ', metrics3.to_str(val_score3))
+                print('class 4: ', metrics4.to_str(val_score4))
+                print('class 5: ', metrics5.to_str(val_score5))
+                print('class 6: ', metrics6.to_str(val_score6))
+
                 if val_score['Mean IoU'] > best_score:  # save best model
                     best_score = val_score['Mean IoU']
                     save_ckpt('checkpoints/best_%s_%s_os%d.pth' %
