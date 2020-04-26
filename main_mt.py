@@ -481,8 +481,7 @@ def main():
                           (opts.model, opts.dataset, opts.output_stride))
                 print("validation...")
                 model.eval()
-                val_score1, val_score2, val_score3, val_score4, val_score5, 
-                val_score6, ret_samples = validate(
+                val_score1, val_score2, val_score3, val_score4, val_score5, val_score6, ret_samples = validate(
                     opts=opts, model=model, loader=val_loader, device=device, metrics1=metrics1, 
                     metrics2=metrics2, metrics3=metrics3, metrics4=metrics4, metrics5=metrics5, 
                     metrics6=metrics6, ret_samples_ids=vis_sample_id)
