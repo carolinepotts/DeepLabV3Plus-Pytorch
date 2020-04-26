@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 
 from torch.utils import data
-from datasets import VOCSegmentation, Cityscapes, WeedClusterDataset, CloudShadowDataset, DoublePlantDataset, PlanterSkipDataset, StandingWaterDataset, WaterwayDataset
+from datasets import VOCSegmentation, Cityscapes,AllDataset, WeedClusterDataset, CloudShadowDataset, DoublePlantDataset, PlanterSkipDataset, StandingWaterDataset, WaterwayDataset
 from utils import ext_transforms as et
 from metrics import StreamSegMetrics
 
