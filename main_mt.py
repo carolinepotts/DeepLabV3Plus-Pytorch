@@ -277,23 +277,25 @@ class multi_output_model(torch.nn.Module):
         nn.init.xavier_normal_(self.y5o.weight)
         self.y6o = nn.Linear(512,512)
         nn.init.xavier_normal_(self.y6o.weight)
+
+        self.sm2 = nn.Softmax2d()
         
         
     def forward(self, x):
        
         x = self.deeplab_model(x)
 
-        pdb.set_trace()
+        # pdb.set_trace()
         
         # heads
-        y1o = F.relu(self.y1o(x))
-        y2o = F.relu(self.y2o(x))
-        y3o = F.relu(self.y3o(x))
-        y4o = F.relu(self.y4o(x))
-        y5o = F.relu(self.y5o(x))
-        y6o = F.relu(self.y6o(x))
+        y1o = self.sm2(self.y1o(x))
+        y2o = self.sm2(self.y2o(x))
+        y3o = self.sm2(self.y3o(x))
+        y4o = self.sm2(self.y4o(x))
+        y5o = self.sm2(self.y5o(x))
+        y6o = self.sm2(self.y6o(x))
         
-        pdb.set_trace()
+        # pdb.set_trace()
 
         return y1o, y2o, y3o, y4o, y5o, y6o
 
