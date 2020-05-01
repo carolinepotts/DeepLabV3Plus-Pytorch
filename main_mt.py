@@ -501,7 +501,7 @@ def main():
                 print('class 6: ', metrics6.to_str(val_score6))
 
                 all_vals = [val_score1, val_score2, val_score3, val_score4, val_score5, val_score6]
-                val_score = {key: statistics.mean([x[key] for x in all_vals])  for (key, value) in val_score1.items()}
+                val_score = {key: statistics.mean([x[key] for x in all_vals])  for (key, value) in val_score1.items() if key!='Class IoU'}
 
                 print('val_score (means): ', val_score)
 
