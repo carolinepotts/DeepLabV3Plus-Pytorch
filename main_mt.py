@@ -464,6 +464,8 @@ def main():
             optimizer.zero_grad()
             outputs = model(images)
 
+            pdb.set_trace()
+
             # print('checking what output looks like:', outputs[0])
 
             # TODO later: edit this as well for weighted cr en-
