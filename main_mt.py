@@ -511,11 +511,14 @@ def main():
                               (opts.model, opts.dataset,opts.output_stride))
 
                 if vis is not None:  # visualize validation score and samples
-                    vis.vis_scalar("[Val] Overall Acc", cur_itrs, val_score['Overall Acc'])
-                    vis.vis_scalar("[Val] Mean IoU", cur_itrs, val_score['Mean IoU'])
-                    vis.vis_table("[Val] Class IoU", val_score['Class IoU'])
-                    vis.vis_scalar("[Val] Background Class IoU", cur_itrs, val_score['Class IoU'][0])
-                    vis.vis_scalar("[Val] Class 1 IoU", cur_itrs, val_score['Class IoU'][1])
+
+                    for val_score, num in zip(all_vals, ['1', '2', '3', '4', '5', '6']):
+                        vis.vis_scalar("[Val] " + num + " Overall Acc", cur_itrs, val_score['Overall Acc'])
+                        vis.vis_scalar("[Val] " + num + "  Mean IoU", cur_itrs, val_score['Mean IoU'])
+                        vis.vis_table("[Val] " + num + "  Class IoU", val_score['Class IoU'])
+                        vis.vis_scalar("[Val] " + num + "  Background Class IoU", cur_itrs, val_score['Class IoU'][0])
+                        vis.vis_scalar("[Val] " + num + "  Class 1 IoU", cur_itrs, val_score['Class IoU'][1])
+                    
 
                     # for k, (img, target, lbl) in enumerate(ret_samples):
                     #     img = (denorm(img) * 255).astype(np.uint8)
