@@ -6,6 +6,7 @@ import random
 import argparse
 import numpy as np
 import statistics
+import pdb
 
 from torch.utils import data
 from datasets import VOCSegmentation, Cityscapes,AllDataset, WeedClusterDataset, CloudShadowDataset, DoublePlantDataset, PlanterSkipDataset, StandingWaterDataset, WaterwayDataset
@@ -281,21 +282,18 @@ class multi_output_model(torch.nn.Module):
     def forward(self, x):
        
         x = self.deeplab_model(x)
+
+        pdb.set_trace()
         
         # heads
-        # y1o = F.relu(self.y1o(x))
-        # y2o = F.relu(self.y2o(x))
-        # y3o = F.relu(self.y3o(x))
-        # y4o = F.relu(self.y4o(x))
-        # y5o = F.relu(self.y5o(x))
-        # y6o = F.relu(self.y6o(x))
-        y1o=x
-        y2o=x
-        y3o=x
-        y4o=x
-        y5o=x
-        y6o=x
+        y1o = F.relu(self.y1o(x))
+        y2o = F.relu(self.y2o(x))
+        y3o = F.relu(self.y3o(x))
+        y4o = F.relu(self.y4o(x))
+        y5o = F.relu(self.y5o(x))
+        y6o = F.relu(self.y6o(x))
         
+        pdb.set_trace()
 
         return y1o, y2o, y3o, y4o, y5o, y6o
 
@@ -464,7 +462,7 @@ def main():
             optimizer.zero_grad()
             outputs = model(images)
 
-            print('checking what output looks like:', outputs[0])
+            # print('checking what output looks like:', outputs[0])
 
             # TODO later: edit this as well for weighted cr en-
             #  l1 = crit1, l2 = crit2, ... and then sum for loss 
