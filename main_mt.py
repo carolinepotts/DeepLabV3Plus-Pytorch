@@ -499,6 +499,11 @@ def main():
                 print('class 5: ', metrics5.to_str(val_score5))
                 print('class 6: ', metrics6.to_str(val_score6))
 
+                all_vals = [val_score1, val_score2, val_score3, val_score4, val_score5, val_score6]
+                val_score = {key: mean([x[key] for x in all_vals])  for (key, value) in val_score1.items()}
+
+                print('val_score (means): ', val_score)
+
                 if val_score['Mean IoU'] > best_score:  # save best model
                     best_score = val_score['Mean IoU']
                     save_ckpt('checkpoints/best_%s_%s_os%d.pth' %
