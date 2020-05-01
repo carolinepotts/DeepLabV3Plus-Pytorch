@@ -13,6 +13,7 @@ from utils import ext_transforms as et
 from metrics import StreamSegMetrics
 
 import torch
+import torch.nn.functional as F
 import torch.nn as nn
 from utils.visualizer import Visualizer
 
@@ -282,12 +283,19 @@ class multi_output_model(torch.nn.Module):
         x = self.deeplab_model(x)
         
         # heads
-        y1o = self.y1o(x)
-        y2o = self.y2o(x)
-        y3o = self.y3o(x)
-        y4o = self.y4o(x)
-        y5o = self.y5o(x)
-        y6o = self.y6o(x)
+        # y1o = F.relu(self.y1o(x))
+        # y2o = F.relu(self.y2o(x))
+        # y3o = F.relu(self.y3o(x))
+        # y4o = F.relu(self.y4o(x))
+        # y5o = F.relu(self.y5o(x))
+        # y6o = F.relu(self.y6o(x))
+        y1o=x
+        y2o=x
+        y3o=x
+        y4o=x
+        y5o=x
+        y6o=x
+        
 
         return y1o, y2o, y3o, y4o, y5o, y6o
 
@@ -434,12 +442,6 @@ def main():
                                       np.int32) if opts.enable_vis else None  # sample idxs for visualization
     denorm = utils.Denormalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # denormalization for ori images
 
-    if opts.test_only:
-        model.eval()
-        val_score, ret_samples = validate(
-            opts=opts, model=model, loader=val_loader, device=device, metrics=metrics, ret_samples_ids=vis_sample_id)
-        print(metrics.to_str(val_score))
-        return
 
     interval_loss = 0
     while True: #cur_itrs < opts.total_itrs:
