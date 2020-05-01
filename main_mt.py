@@ -222,7 +222,14 @@ def validate(opts, model, loader, device, metrics1, metrics2, metrics3, metrics4
             la6 = la6.to(device, dtype=torch.long)
 
             outputs = model(images)
-            preds = outputs.detach().max(dim=1)[1].cpu().numpy()
+
+            preds1 = outputs[0].detach().max(dim=1)[1].cpu().numpy()
+            preds2 = outputs[1].detach().max(dim=1)[1].cpu().numpy()
+            preds3 = outputs[2].detach().max(dim=1)[1].cpu().numpy()
+            preds4 = outputs[3].detach().max(dim=1)[1].cpu().numpy()
+            preds5 = outputs[4].detach().max(dim=1)[1].cpu().numpy()
+            preds6 = outputs[5].detach().max(dim=1)[1].cpu().numpy()
+
 
             targets1 = la1.cpu().numpy()
             targets2 = la2.cpu().numpy()
@@ -232,12 +239,12 @@ def validate(opts, model, loader, device, metrics1, metrics2, metrics3, metrics4
             targets6 = la6.cpu().numpy()
 
 
-            metrics1.update(targets1, preds[0])
-            metrics2.update(targets2, preds[1])
-            metrics3.update(targets3, preds[2])
-            metrics4.update(targets4, preds[3])
-            metrics5.update(targets5, preds[4])
-            metrics6.update(targets6, preds[5])
+            metrics1.update(targets1, preds1)
+            metrics2.update(targets2, preds2)
+            metrics3.update(targets3, preds3)
+            metrics4.update(targets4, preds4)
+            metrics5.update(targets5, preds5)
+            metrics6.update(targets6, preds6)
 
         score1 = metrics1.get_results()
         score2 = metrics2.get_results()
