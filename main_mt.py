@@ -285,7 +285,6 @@ class multi_output_model(torch.nn.Module):
        
         x = self.deeplab_model(x)
 
-        # pdb.set_trace()
         
         # heads
         y1o = self.sm2(self.y1o(x))
@@ -295,7 +294,6 @@ class multi_output_model(torch.nn.Module):
         y5o = self.sm2(self.y5o(x))
         y6o = self.sm2(self.y6o(x))
         
-        # pdb.set_trace()
 
         return y1o, y2o, y3o, y4o, y5o, y6o
 
@@ -475,7 +473,6 @@ def main():
             optimizer.zero_grad()
             outputs = model(images)
 
-            pdb.set_trace()
 
 
             
