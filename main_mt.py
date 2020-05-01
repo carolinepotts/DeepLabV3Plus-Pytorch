@@ -397,12 +397,12 @@ def main():
         weight_list = [float(i)  for i in weight_str.strip().split(",")]
         if len(weight_list) != 12:
             raise ValueError("Need one weight per class per task for weighted cross entropy loss")
-        class_weights1 = torch.FloatTensor(weight_list[0:1]).cuda()
-        class_weights2 = torch.FloatTensor(weight_list[2:3]).cuda()
-        class_weights3 = torch.FloatTensor(weight_list[4:5]).cuda()
-        class_weights4 = torch.FloatTensor(weight_list[6:7]).cuda()
-        class_weights5 = torch.FloatTensor(weight_list[8:9]).cuda()
-        class_weights6 = torch.FloatTensor(weight_list[10:11]).cuda()
+        class_weights1 = torch.FloatTensor(weight_list[0:2]).cuda()
+        class_weights2 = torch.FloatTensor(weight_list[2:4]).cuda()
+        class_weights3 = torch.FloatTensor(weight_list[4:6]).cuda()
+        class_weights4 = torch.FloatTensor(weight_list[6:8]).cuda()
+        class_weights5 = torch.FloatTensor(weight_list[8:10]).cuda()
+        class_weights6 = torch.FloatTensor(weight_list[10:]).cuda()
 
         crit1 = nn.CrossEntropyLoss(weight=class_weights1, reduction='mean')
         crit2 = nn.CrossEntropyLoss(weight=class_weights2, reduction='mean')
