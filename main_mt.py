@@ -397,12 +397,23 @@ def main():
     elif opts.loss_type == 'weighted_cross_entropy':
         weight_str = opts.loss_weights
         weight_list = [float(i)  for i in weight_str.strip().split(",")]
-        if len(weight_list) != opts.num_classes:
-            raise ValueError("Need one weight per class for weighted cross entropy loss")
-        class_weights = torch.FloatTensor(weight_list).cuda()
-        criterion = nn.CrossEntropyLoss(weight=class_weights, reduction='mean')
-    # TODO later (once training works): add multitask crit1, crit2, ... here, for weighted cross entropy loss 
+        if len(weight_list) != 12:
+            raise ValueError("Need one weight per class per task for weighted cross entropy loss")
+        class_weights1 = torch.FloatTensor(weight_list[0,1]).cuda()
+        class_weights2 = torch.FloatTensor(weight_list[2,3]).cuda()
+        class_weights3 = torch.FloatTensor(weight_list[4,5]).cuda()
+        class_weights4 = torch.FloatTensor(weight_list[6,7]).cuda()
+        class_weights5 = torch.FloatTensor(weight_list[8,9]).cuda()
+        class_weights6 = torch.FloatTensor(weight_list[10,11]).cuda()
 
+        crit1 = nn.CrossEntropyLoss(weight=class_weights1, reduction='mean')
+        crit2 = nn.CrossEntropyLoss(weight=class_weights2, reduction='mean')
+        crit3 = nn.CrossEntropyLoss(weight=class_weights3, reduction='mean')
+        crit4 = nn.CrossEntropyLoss(weight=class_weights4, reduction='mean')
+        crit5 = nn.CrossEntropyLoss(weight=class_weights5, reduction='mean')
+        crit6 = nn.CrossEntropyLoss(weight=class_weights6, reduction='mean')
+
+    
     def save_ckpt(path):
         """ save current model
         """
@@ -448,7 +459,7 @@ def main():
         # =====  Train  =====
         model.train()
         cur_epochs += 1
-        # TODO: fix images, labels to be images, la1, la2, ... bc dataloader will now have 7 things in it
+
         for (images, la1, la2, la3, la4, la5, la6) in train_loader:
             cur_itrs += 1
 
@@ -466,16 +477,24 @@ def main():
 
             pdb.set_trace()
 
-            # print('checking what output looks like:', outputs[0])
 
-            # TODO later: edit this as well for weighted cr en-
-            #  l1 = crit1, l2 = crit2, ... and then sum for loss 
-            l1 = criterion(outputs[0], la1)
-            l2 = criterion(outputs[1], la2)
-            l3 = criterion(outputs[2], la3)
-            l4 = criterion(outputs[3], la4)
-            l5 = criterion(outputs[4], la5)
-            l6 = criterion(outputs[5], la6)
+            
+            if opts.loss_type == 'weighted_cross_entropy':
+                l1 = crit1(outputs[0], la1)
+                l2 = crit2(outputs[1], la2)
+                l3 = crit3(outputs[2], la3)
+                l4 = crit4(outputs[3], la4)
+                l5 = crit5(outputs[4], la5)
+                l6 = crit6(outputs[5], la6)
+
+            else:
+                l1 = criterion(outputs[0], la1)
+                l2 = criterion(outputs[1], la2)
+                l3 = criterion(outputs[2], la3)
+                l4 = criterion(outputs[3], la4)
+                l5 = criterion(outputs[4], la5)
+                l6 = criterion(outputs[5], la6)
+
             loss = l1 + l2 + l3 + l4 + l5 + l6
             loss.backward()
             optimizer.step()
