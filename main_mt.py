@@ -461,6 +461,9 @@ def main():
 
             optimizer.zero_grad()
             outputs = model(images)
+
+            print('checking what output looks like:', outputs[0])
+
             # TODO later: edit this as well for weighted cr en-
             #  l1 = crit1, l2 = crit2, ... and then sum for loss 
             l1 = criterion(outputs[0], la1)
